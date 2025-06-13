@@ -1,28 +1,28 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const obtenerEstadisticasDesdeURL = require('./scraper');
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
+app.use(express.json()); // Necesario para leer JSON en el body
 
-app.get('/estadisticas', async (req, res) => {
-  const { url } = req.query;
+app.post('/estadisticas', async (req, res) => {
+  const { url } = req.body;
 
   if (!url) {
-    return res.status(400).json({ error: 'Falta el parámetro ?url=' });
+    return res.status(400).json({ error: 'Falta el parámetro "url"' });
   }
 
   try {
-    const datos = await obtenerEstadisticasDesdeURL(url);
-    res.json(datos);
-  } catch (err) {
-    res.status(500).json({ error: 'Error al obtener estadísticas', detalle: err.message });
+    const data = await obtenerEstadisticasDesdeURL(url);
+    res.json(data);
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error.message);
+    res.status(500).json({ error: 'Error interno del servidor.' });
   }
 });
 
-// Usar el puerto definido por Render o .env
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Servidor en http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Servidor backend en puerto ${PORT}`);
+});
