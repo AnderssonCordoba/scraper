@@ -1,7 +1,11 @@
 const puppeteer = require('puppeteer');
 
 async function obtenerEstadisticasDesdeURL(partidoUrlPrincipal) {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  
 
   async function obtenerEquiposYUrlsResultados(urlPartido) {
     const page = await browser.newPage();
